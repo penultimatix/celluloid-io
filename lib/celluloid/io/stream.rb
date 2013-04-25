@@ -46,7 +46,7 @@ module Celluloid
             wait_readable
             retry
           rescue
-            return buffer #de Same situation as below, except here it's EOFError now, or any other.
+            return buffer #de #61
           end
         end
 
@@ -67,7 +67,7 @@ module Celluloid
             rescue ::IO::WaitWritable
               wait_writable
               retry
-            rescue #de EOFError but also Errno::ETIMEDOUT. Always send 0 rather than crash.
+            rescue #de #61
               return total_written
             end
 
@@ -324,7 +324,7 @@ module Celluloid
           @read_buffer << sysread(BLOCK_SIZE)
         rescue Errno::EAGAIN
           retry
-        rescue EOFError
+        rescue #de #61 EOFError
           @eof = true
         end
       end
