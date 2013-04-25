@@ -29,12 +29,6 @@ module Celluloid
         @write_latch = Latch.new
       end
 
-      # Are we inside of a Celluloid::IO actor?
-      def evented?
-        actor = Thread.current[:celluloid_actor]
-        actor && actor.mailbox.is_a?(Celluloid::IO::Mailbox)
-      end
-
       # Wait until the current object is readable
       def wait_readable; Celluloid::IO.wait_readable(self); end
 
@@ -195,7 +189,11 @@ module Celluloid
       # See also #gets
       def readlines(eol=$/)
         ary = []
-        ary << line while line = self.gets(eol)
+
+        while line = self.gets(eol)
+          ary << line
+        end
+
         ary
       end
 
@@ -215,7 +213,9 @@ module Celluloid
 
       # Calls the given block once for each byte in the stream.
       def each_byte # :yields: byte
-        yield(c.ord) while c = getc
+        while c = getc
+          yield(c.ord)
+        end
       end
 
       # Reads a one-character string from the stream.  Raises an EOFError at end
