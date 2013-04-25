@@ -65,7 +65,7 @@ module Celluloid
             rescue ::IO::WaitWritable
               wait_writable
               retry
-            rescue EOFError
+            rescue #de EOFError but also Errno::ETIMEDOUT. Always send 0 rather than crash.
               return total_written
             end
 
