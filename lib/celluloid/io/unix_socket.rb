@@ -13,16 +13,18 @@ module Celluloid
         self.new(socket_path, &block)
       end
 
-      alias read read_stream
+      #de alias read read_stream
       def read(size, buf=nil)
         raise EOFError if @socket.closed?
-        read_stream size, buff
+        Stream.instance_method( :read ).bind(self).call size, buf
+        #de read_stream size, buff
       end
 
-      alias readpartial read_stream
+      #de alias readpartial readpartial_stream
       def readpartial(maxlen, buf=nil)
         raise EOFError if @socket.closed?
-        read_stream maxlen, buf
+        Stream.instance_method( :readpartial ).bind(self).call maxlen, buf
+        #de readpartial_stream maxlen, buf
       end
 
       # Convert a Ruby UNIXSocket into a Celluloid::IO::UNIXSocket
