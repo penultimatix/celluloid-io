@@ -25,7 +25,7 @@ describe Celluloid::IO::SSLServer do
     context "inside Celluloid::IO" do
       it "should be evented" do
         with_ssl_server do |subject|
-          within_io_actor { subject.evented? }.should be_true
+          within_io_actor { Celluloid::IO.evented? }.should be_true
         end
       end
 
@@ -33,7 +33,7 @@ describe Celluloid::IO::SSLServer do
         with_ssl_server do |subject|
           thread = Thread.new do
             raw = TCPSocket.new(example_addr, example_ssl_port)
-            ssl = OpenSSL::SSL::SSLSocket.new(raw, client_context).connect
+            OpenSSL::SSL::SSLSocket.new(raw, client_context).connect
           end
           peer = within_io_actor { subject.accept }
           peer.should be_a Celluloid::IO::SSLSocket
@@ -48,7 +48,7 @@ describe Celluloid::IO::SSLServer do
     context "outside Celluloid::IO" do
       it "should be blocking" do
         with_ssl_server do |subject|
-          subject.should_not be_evented
+          Celluloid::IO.should_not be_evented
         end
       end
 
@@ -56,7 +56,7 @@ describe Celluloid::IO::SSLServer do
         with_ssl_server do |subject|
           thread = Thread.new do
             raw = TCPSocket.new(example_addr, example_ssl_port)
-            ssl = OpenSSL::SSL::SSLSocket.new(raw, client_context).connect
+            OpenSSL::SSL::SSLSocket.new(raw, client_context).connect
           end
           peer = subject.accept
           peer.should be_a Celluloid::IO::SSLSocket
