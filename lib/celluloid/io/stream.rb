@@ -45,6 +45,8 @@ module Celluloid
           rescue ::IO::WaitReadable
             wait_readable
             retry
+          rescue
+            return buffer #de Same situation as below, except here it's EOFError now, or any other.
           end
         end
 
