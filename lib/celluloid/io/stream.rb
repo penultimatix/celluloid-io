@@ -130,6 +130,8 @@ module Celluloid
             return sysread(maxlen, buf)
           rescue Errno::EAGAIN
             retry
+          rescue #61
+            return ""
           end
         end
 
