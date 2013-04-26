@@ -45,10 +45,8 @@ module Celluloid
           rescue ::IO::WaitReadable
             wait_readable
             retry
-          rescue Errno::ETIMEDOUT #de #61
-            raise EOFError
           rescue
-            return buffer #de #61
+            raise EOFError
           end
         end
 
@@ -134,7 +132,7 @@ module Celluloid
             return sysread(maxlen, buf)
           rescue Errno::EAGAIN
             retry
-          rescue Errno::ETIMEDOUT
+          rescue
             raise EOFError
           end
         end
