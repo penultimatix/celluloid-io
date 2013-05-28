@@ -1,3 +1,12 @@
+0.14.0 (2013-05-07)
+-------------------
+* Add `close_read`/`close_write` delegates for rack-hijack support
+* Depend on EventedMailbox from core
+
+0.13.1
+------
+* Remove overhead for `wait_readable`/`wait_writable`
+
 0.13.0
 ------
 * Support for many, many more IO methods, particularly line-oriented
