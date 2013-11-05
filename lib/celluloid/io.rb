@@ -18,6 +18,9 @@ require 'celluloid/io/ssl_socket'
 module Celluloid
   # Actors with evented IO support
   module IO
+    # Default size to read from or write to the stream for buffer operations
+    BLOCK_SIZE = 1024 * 16
+
     def self.included(klass)
       klass.send :include, Celluloid
       klass.mailbox_class Celluloid::IO::Mailbox
@@ -27,12 +30,20 @@ module Celluloid
       actor = Thread.current[:celluloid_actor]
       actor && actor.mailbox.is_a?(Celluloid::IO::Mailbox)
     end
+  
+    def self.try_convert(src)
+      ::IO.try_convert(src)
+    end
 
     def self.copy_stream(src, dst, copy_length = nil, src_offset = nil)
-      src = ::IO.try_convert(src)
-      dst = ::IO.try_convert(dst)
+      raise NotImplementedError, "length/offset not supported" if copy_length || src_offset
 
-      Celluloid.defer { ::IO.copy_stream(src, dst, copy_length, src_offset) }
+      src, dst = try_convert(src), try_convert(dst)
+
+      # FIXME: this always goes through the reactor, and can block on file I/O
+      while data = src.read(BLOCK_SIZE)
+        dst << data
+      end
     end
 
     def wait_readable(io)
