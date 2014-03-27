@@ -3,10 +3,10 @@ module Celluloid
     # UDPSockets with combined blocking and evented support
     class UDPSocket
       extend Forwardable
-      def_delegators :@socket, :bind, :send, :recvfrom_nonblock, :close, :closed?
+      def_delegators :@socket, :bind, :connect, :send, :recvfrom_nonblock, :close, :closed?
 
-      def initialize
-        @socket = ::UDPSocket.new
+      def initialize(address_family = ::Socket::AF_INET)
+        @socket = ::UDPSocket.new(address_family)
       end
 
       # Wait until the socket is readable
