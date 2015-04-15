@@ -68,6 +68,9 @@ module Celluloid
               raise EOFError
             rescue
               return total_written
+            rescue Errno::EAGAIN
+              wait_writable
+              retry
             end
 
             total_written += written
